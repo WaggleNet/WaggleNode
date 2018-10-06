@@ -1,0 +1,9 @@
+[submodule "lib/WaggleNetNet"]
+	path = lib/WaggleNetNet
+	url = https://github.com/WaggleNet/WaggleNetNet.git
+[submodule "lib/RF24"]
+	path = lib/RF24
+	url = https://github.com/nRF24/RF24
+[submodule "lib/RF24Network"]
+	path = lib/RF24Network
+	url = https://github.com/nRF24/RF24Network
