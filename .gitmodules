@@ -7,3 +7,6 @@
 [submodule "lib/RF24Network"]
 	path = lib/RF24Network
 	url = https://github.com/nRF24/RF24Network
+[submodule "external/sensor_protocol"]
+	path = external/sensor_protocol
+	url = https://github.com/WaggleNet/WaggleNet_PnP.git
