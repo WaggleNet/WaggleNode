@@ -4,18 +4,19 @@ WaggleNode::WaggleNode(uint8_t CE_pin, uint8_t CS_pin)
     : radio(RF24(CE_pin, CS_pin)), network(RF24Network(radio)), mesh(RF24Mesh(radio, network)) {
 }
 
-void WaggleNode::begin() {
-    begin(123);
+bool WaggleNode::begin() {
+    return begin(123);
 }
 
-void WaggleNode::begin(uint8_t radio_channel) {
-    nodeid_t nodeid = get_sig_byte_();
+bool WaggleNode::begin(uint8_t radio_channel) {
+    nodeID = get_sig_byte_();
     mesh.setNodeID(nodeID);
-    Serial.print("NodeID: ");
-    Serial.print(nodeid, HEX);
+    Serial.print(F("NodeID: "));
+    Serial.println(nodeID, HEX);
 
     Serial.println(F("Connecting to Mesh..."));
-    mesh.begin(radio_channel, RF24_2MBPS);
+    bool result = mesh.begin(radio_channel, RF24_2MBPS);
+    return result;
 }
 
 void WaggleNode::update() {
@@ -35,12 +36,20 @@ void WaggleNode::update() {
  * Retrieves ATMega328PB Device Unique ID for NodeID
  * Unique ID reside in bytes 14-23 (inclusive), take the last 4
  */
-uint32_t get_sig_byte_() {
-    uint8_t res[4];
+uint32_t WaggleNode::get_sig_byte_() {
+    // uint8_t res[4];
     // Take bytes backward to match little endian
-    for (int i = 0; i < 4; i++)
-        res[23-i] = boot_signature_byte_get(i);
-    return *(uint32_t*)res;
+    // for (int i = 0; i < 4; i++)
+    //     res[23-i] = boot_signature_byte_get(i);
+    // return *(uint32_t*)res;
+    uint32_t res = 0;
+    for (int i = 391; i < 395; i++)
+        res = (res << 8) | EEPROM[i];
+    return res;
+}
+
+uint8_t WaggleNode::send_telemetry(void* payload, uint8_t len) {
+    return write_(payload, 120, len);
 }
 
 uint8_t WaggleNode::write_(void *payload, uint8_t ch, uint8_t len) {

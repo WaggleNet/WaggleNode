@@ -4,6 +4,7 @@
 #include "RF24Network.h"
 #include "RF24Mesh.h"
 #include <avr/boot.h>
+#include <EEPROM.h>
 
 
 class WaggleNode {
@@ -13,8 +14,8 @@ class WaggleNode {
     RF24Mesh mesh;
     public:
         WaggleNode(uint8_t CE_pin, uint8_t CS_pin);
-        void begin();
-        void begin(uint8_t radio_channel);
+        bool begin();
+        bool begin(uint8_t radio_channel);
         void update();
         uint8_t send_telemetry(void* payload, uint8_t len);
         nodeid_t nodeID;
