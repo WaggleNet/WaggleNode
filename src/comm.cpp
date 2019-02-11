@@ -1,11 +1,12 @@
 #include "comm.h"
+#include "pinout.h"
 
 WaggleNode::WaggleNode(uint8_t CE_pin, uint8_t CS_pin)
     : radio(RF24(CE_pin, CS_pin)), network(RF24Network(radio)), mesh(RF24Mesh(radio, network)) {
 }
 
 bool WaggleNode::begin() {
-    return begin(123);
+    return begin(RADIO_CHANNEL);
 }
 
 bool WaggleNode::begin(uint8_t radio_channel) {

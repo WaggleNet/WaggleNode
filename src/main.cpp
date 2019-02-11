@@ -7,7 +7,7 @@
 #include "pinout.h"
 #include "signals.h"
 
-WaggleNode node(9, 10);
+WaggleNode node(RADIO_CE, RADIO_CSN);
 
 void reportSysStats() {
     transmit_power_stats(node);

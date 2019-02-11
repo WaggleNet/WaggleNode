@@ -8,3 +8,8 @@
 
 #define LED_BLUE 6
 #define LED_ORANGE 4
+
+#define RADIO_CE 9
+#define RADIO_CSN 10
+
+#define RADIO_CHANNEL 123
