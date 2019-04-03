@@ -16,11 +16,10 @@ void collectData(WaggleNode& node) {
     uint8_t block_size = 15; // Headers
     uint8_t num_entry = 0;
     for (int entry = 0; entry < sensor->getSize(); entry++) {
-        // FIXME: hasChanged ignored for now
-        // if (sensor->hasChanged(entry)) {
+        if (sensor->hasChanged(entry)) {
             block_size += sensor->getLength(entry) + 2;
             num_entry ++;
-        // }
+        }
     }
     Serial.print(F("-!>\tSEND\tMessage.Size\t"));
     Serial.println(block_size);
@@ -41,6 +40,7 @@ void collectData(WaggleNode& node) {
     uint8_t write_head = 15; // Write from here
     for (int entry = 0; entry < sensor->getSize(); entry++) {
         // if (sensor->hasChanged(entry)) {
+            if (!sensor->hasChanged(entry)) continue;
             msg[write_head] = entry;
             msg[write_head+1] = sensor->getLength(entry);
             auto& msg_size = msg[write_head+1];
