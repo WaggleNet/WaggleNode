@@ -1,4 +1,4 @@
-#include "manager.h"
+#include "pnpmanager.h"
 #include "sensor.h"
 #include "comm.h"
 
