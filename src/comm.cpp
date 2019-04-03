@@ -49,8 +49,8 @@ uint32_t WaggleNode::get_sig_byte_() {
     return res;
 }
 
-uint8_t WaggleNode::send_telemetry(void* payload, uint8_t len) {
-    return write_(payload, 120, len);
+uint8_t WaggleNode::send_telemetry(void* payload, uint8_t len, uint8_t channel) {
+    return write_(payload, channel, len);
 }
 
 uint8_t WaggleNode::write_(void *payload, uint8_t ch, uint8_t len) {

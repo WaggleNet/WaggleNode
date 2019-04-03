@@ -8,6 +8,25 @@ void initSensing() {
     manager.begin();
 }
 
+void transmitSensorList(WaggleNode& node) {
+    uint8_t msg_size = manager.getSensorCount()*8 + 7;
+    uint8_t msg[msg_size];
+    // Prepare the sysmsg header
+    // Schema: https://wagglenet.atlassian.net/wiki/spaces/SPORT/pages/13238331/Node-to-Router+Data+Format
+    *(uint32_t*)msg = node.nodeID;
+    msg[4] = 0;
+    uint8_t pos = 5;
+    for (int sensor_idx = 0; sensor_idx < manager.getSensorCount(); sensor_idx++) {
+        auto sensor = manager.getSensor(sensor_idx);
+        *(uint32_t*)(msg+pos) = (uint32_t)sensor->address;
+        pos += 4;
+        *(uint32_t*)(msg+pos) = (uint32_t)sensor->type;
+        pos += 4;
+    }
+    // Report all the sensors to router
+    node.send_telemetry(msg, msg_size, CH_SYSMSG);
+}
+
 void collectData(WaggleNode& node) {
     for (int sensor_idx = 0; sensor_idx < manager.getSensorCount(); sensor_idx++) {
         Serial.print(F("-!>\tCOLL\tSensor.Index\t"));

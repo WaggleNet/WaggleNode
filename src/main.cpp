@@ -31,6 +31,7 @@ void setup() {
     auto result = node.begin();
     signal_connection_begin(result);
     initSensing();
+    transmitSensorList(node);
     systemStatsTimer.start();
     telemetryTimer.start();
 }
