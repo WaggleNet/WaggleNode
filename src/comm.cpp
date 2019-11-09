@@ -44,7 +44,7 @@ uint32_t WaggleNode::get_sig_byte_() {
     //     res[23-i] = boot_signature_byte_get(i);
     // return *(uint32_t*)res;
     uint32_t res = 0;
-    for (int i = 391; i < 395; i++)
+    for (int i = NODE_ID_LOC; i < 395; i++)
         res = (res << 8) | EEPROM[i];
     return res;
 }

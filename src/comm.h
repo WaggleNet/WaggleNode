@@ -14,11 +14,12 @@
 
 
 class WaggleNode {
-    // The Infra
-    RF24 radio;
-    RF24Network network;
-    RF24Mesh mesh;
     public:
+        // The Infra
+        RF24 radio;
+        RF24Network network;
+        RF24Mesh mesh;
+        
         WaggleNode(uint8_t CE_pin, uint8_t CS_pin);
         bool begin();
         bool begin(uint8_t radio_channel);
