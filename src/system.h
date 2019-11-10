@@ -39,16 +39,36 @@ system_t getPowerReadouts() {
 
 void transmit_power_stats(WaggleNode& node) {
     auto readouts = getPowerReadouts();
-    uint8_t* buffer = new uint8_t[17+sizeof(readouts)];
+    // Data size
+    // Header            15
+    // Entry overhead   + 8
+    // All entries     + 10
+    // --------------------
+    //           total = 33
+    const size_t data_size = 33;
+    uint8_t* buffer = new uint8_t[data_size];
     *(uint32_t*)buffer = node.nodeID;
     *(uint32_t*)(buffer+5) = 0; // Sensor ID
     *(uint32_t*)(buffer+9) = TYPE_WN_NODE_SYSTEM_STATUS; // Sensor Type
-    buffer[4] = 0;
-    buffer[13] = 0;
-    buffer[14] = 1; // # of entries
+    buffer[4] = 0; // reserved
+    buffer[13] = 0; // reserved
+    buffer[14] = 4; // # of entries
+    // Entry 1: Solar volt
     buffer[15] = 0; // Entry ID
-    buffer[16] = sizeof(readouts); // Data size
-    memcpy(buffer+17, &readouts, sizeof(readouts));
-    node.send_telemetry(buffer, 17+sizeof(readouts));
+    buffer[16] = sizeof(float); // Data size
+    memcpy(buffer+17, &(readouts.solar_volt), sizeof(float));
+    // Entry 2: Battery volt
+    buffer[21] = 1; // Entry ID
+    buffer[22] = sizeof(float); // Data size
+    memcpy(buffer+23, &(readouts.battery_volt), sizeof(float));
+    // Entry 3: Charging
+    buffer[27] = 2; // Entry ID
+    buffer[28] = sizeof(bool); // Data size
+    memcpy(buffer+29, &(readouts.charging), sizeof(bool));
+    // Entry 4: Charge ready
+    buffer[30] = 3; // Entry ID
+    buffer[31] = sizeof(bool); // Data size
+    memcpy(buffer+32, &(readouts.charge_ready), sizeof(bool));
+    node.send_telemetry(buffer, data_size);
     delete[] buffer;
 }
