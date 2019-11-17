@@ -44,13 +44,13 @@ uint32_t WaggleNode::get_sig_byte_() {
     //     res[23-i] = boot_signature_byte_get(i);
     // return *(uint32_t*)res;
     uint32_t res = 0;
-    for (int i = 391; i < 395; i++)
+    for (int i = NODE_ID_LOC; i < 395; i++)
         res = (res << 8) | EEPROM[i];
     return res;
 }
 
-uint8_t WaggleNode::send_telemetry(void* payload, uint8_t len) {
-    return write_(payload, 120, len);
+uint8_t WaggleNode::send_telemetry(void* payload, uint8_t len, uint8_t channel) {
+    return write_(payload, channel, len);
 }
 
 uint8_t WaggleNode::write_(void *payload, uint8_t ch, uint8_t len) {
