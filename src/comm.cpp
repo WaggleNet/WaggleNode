@@ -1,4 +1,5 @@
 #include "comm.h"
+#include "sensing.h"
 #include "pinout.h"
 
 WaggleNode::WaggleNode(uint8_t CE_pin, uint8_t CS_pin)
@@ -28,7 +29,8 @@ void WaggleNode::update() {
         size_t data_size = network.peek(header);
         byte *payload = new byte[data_size];
         network.read(header, payload, data_size);
-        // TODO: Callback for received payload
+        // Write data into the sensor
+        writeData(payload, data_size);
         delete[] payload;
     }
 }
