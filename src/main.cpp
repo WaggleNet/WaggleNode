@@ -55,4 +55,5 @@ void loop() {
     node.update();
     systemStatsTimer.update();
     telemetryTimer.update();
+    signal_update(node.mesh.check_connection());
 }

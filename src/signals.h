@@ -49,3 +49,24 @@ void signal_connection_begin(bool result) {
         digitalWrite(LED_ORANGE, 0); 
     }
 }
+
+void signal_update(bool connection)
+{
+//LED_BLUE indicates functioning node
+//Blinking orange light indicates a connection to network
+//less than 10% duty cycle
+
+/* bool isON;
+
+if(millis()%15){ */
+//if there is a connection every 5 seconds there will be a .5s period where the blue light is on
+//aka 10% duty cycle
+if(connection&&((millis()/500)%10==0){
+    
+     //   digitalWrite(LED_BLUE, millis()/500 % 2);
+    digitalWrite(LED_BLUE, 1);    
+}
+else{
+    digitalWrite(LED_BLUE, 0);
+}
+}
