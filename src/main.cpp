@@ -10,15 +10,11 @@
 
 WaggleNode node(RADIO_CE, RADIO_CSN);
 
-void reportSysStats() {
-    transmit_power_stats(node);
-}
-
 void reportTelemetry() {
     collectData(node);
 }
 
-Ticker systemStatsTimer(reportSysStats, 10000);
+Ticker systemStatsTimer(updateSystemMonitor, 10000);
 Ticker telemetryTimer(reportTelemetry, 5000);
 
 void setup() {
