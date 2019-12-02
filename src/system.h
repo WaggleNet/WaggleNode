@@ -1,6 +1,7 @@
 #pragma once
 #include "Arduino.h"
 #include "sensor.h"
+#include "sensing.h"
 #include "comm.h"
 #include "pinout.h"
 
@@ -27,6 +28,7 @@ void initSystemMonitor() {
     systemMonitorSensor.addFloatEntry(battery_volt);
     systemMonitorSensor.addBoolEntry(charging);
     systemMonitorSensor.addBoolEntry(charge_ready);
+    manager.addSensor(&systemMonitorSensor);
 }
 
 void updateSystemMonitor() {
