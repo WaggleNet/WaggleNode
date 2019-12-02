@@ -60,18 +60,18 @@ void collectData(WaggleNode& node) {
         msg[14] = num_entry;
         uint8_t write_head = 15; // Write from here
         for (int entry = 0; entry < sensor->getSize(); entry++) {
-            // if (sensor->hasChanged(entry)) {
-                if (!sensor->hasChanged(entry)) continue;
-                msg[write_head] = entry;
-                msg[write_head+1] = sensor->getLength(entry);
-                auto& msg_size = msg[write_head+1];
-                memcpy(msg+write_head+2, sensor->getData(entry), msg_size);
-                write_head += 2 + msg_size;
-                Serial.print(F("-!>\tCOLL\tCollect.Entry\t"));
-                Serial.println(entry);
-                Serial.print(F("-!>\tCOLL\tCollect.Size\t"));
-                Serial.println(msg_size);
-            // }
+            if (!sensor->hasChanged(entry)) continue;
+            msg[write_head] = entry;
+            msg[write_head+1] = sensor->getLength(entry);
+            auto& msg_size = msg[write_head+1];
+            memcpy(msg+write_head+2, sensor->getData(entry), msg_size);
+            write_head += 2 + msg_size;
+            Serial.print(F("-!>\tCOLL\tCollect.Entry\t"));
+            Serial.println(entry);
+            Serial.print(F("-!>\tCOLL\tCollect.Size\t"));
+            Serial.println(msg_size);
+            // Set the entry as not changed
+            sensor->changed(entry, false);
         }
         // Transmit the message
         node.send_telemetry(msg, block_size);
