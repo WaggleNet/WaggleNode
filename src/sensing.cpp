@@ -69,6 +69,8 @@ void collectData(WaggleNode& node) {
                 Serial.println(entry);
                 Serial.print(F("-!>\tCOLL\tCollect.Size\t"));
                 Serial.println(msg_size);
+                // Set the entry as not changed
+                sensor->changed(entry, false);
             // }
         }
         // Transmit the message
