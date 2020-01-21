@@ -24,8 +24,8 @@ float computeVoltage(int pin){
 void initSystemMonitor() {
     systemMonitorSensor.type = TYPE_WN_NODE_SYSTEM_STATUS;
     systemMonitorSensor.address = 0;
-    systemMonitorSensor.addFloatEntry(solar_volt);
     systemMonitorSensor.addFloatEntry(battery_volt);
+    systemMonitorSensor.addFloatEntry(solar_volt);
     systemMonitorSensor.addBoolEntry(charging);
     systemMonitorSensor.addBoolEntry(charge_ready);
     manager.addSensor(&systemMonitorSensor);
