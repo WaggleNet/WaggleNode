@@ -68,7 +68,7 @@ uint8_t WaggleNode::write_(void *payload, uint8_t ch, uint8_t len) {
       // If a write fails, check connectivity to the mesh network
       if (!mesh.checkConnection()) {
         // refresh the network address
-        Serial.println("Renewing Address");
+        Serial.println(F("Renewing Address"));
         mesh.renewAddress();
         return 2;
       } else return 1;
