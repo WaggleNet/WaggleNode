@@ -6,13 +6,18 @@
 #include "pinout.h"
 
 #define TYPE_WN_NODE_SYSTEM_STATUS 0x001A
+#define TYPE_WN_NODE_SYSTEM_CONTROL_EXPERIMENT 0x00F1
 
 Sensor systemMonitorSensor(4);
+Sensor systemControlExperimentSensor(2);
 
 float solar_volt;
 float battery_volt;
 bool charging;
 bool charge_ready;
+
+bool blueLightOn;
+bool orangeLightOn;
 
 float computeVoltage(int pin){
   int sensorValue = analogRead(pin);
@@ -49,4 +54,21 @@ void updateSystemMonitor() {
     systemMonitorSensor.changed(1);
     systemMonitorSensor.changed(2);
     systemMonitorSensor.changed(3);
+}
+
+void handleWriteSystemExperimentLED(uint8_t entry_index) {
+    if (entry_index == 0) {  // blue
+        digitalWrite(LED_BLUE, blueLightOn);
+    } else {  // orange
+        digitalWrite(LED_ORANGE, orangeLightOn);
+    }
+}
+
+void initSystemControlExperiment() {
+    systemControlExperimentSensor.type = TYPE_WN_NODE_SYSTEM_CONTROL_EXPERIMENT;
+    systemControlExperimentSensor.address = 0x10;
+    systemControlExperimentSensor.addData((void*)&blueLightOn, sizeof(blueLightOn), (1 << CFLAG_RW_LOC) | DATA_TYPE_BOOL);
+    systemControlExperimentSensor.addData((void*)&orangeLightOn, sizeof(blueLightOn), (1 << CFLAG_RW_LOC) | DATA_TYPE_BOOL);
+    systemControlExperimentSensor.setCallback(0, handleWriteSystemExperimentLED);
+    systemControlExperimentSensor.setCallback(1, handleWriteSystemExperimentLED);
 }

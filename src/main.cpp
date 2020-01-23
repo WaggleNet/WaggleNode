@@ -57,6 +57,7 @@ void setup() {
     initSensing();
     transmitSensorList(node);
     initSystemMonitor();
+    initSystemControlExperiment();
     Serial.println(F(">>Starting event loop"));
     wdt_reset();  // Hush doggy
     systemStatsTimer.start();
