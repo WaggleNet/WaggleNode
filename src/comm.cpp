@@ -49,26 +49,43 @@ uint32_t WaggleNode::get_sig_byte_() {
     return res;
 }
 
-uint8_t WaggleNode::send_telemetry(void* payload, uint8_t len, uint8_t channel) {
-    return write_(payload, channel, len);
+uint8_t WaggleNode::send_telemetry(void* payload, uint8_t len, uint8_t channel,nodeid_t dest) {
+    return write_(payload, channel, len, dest);
 }
 
-uint8_t WaggleNode::write_(void *payload, uint8_t ch, uint8_t len) {
+uint8_t WaggleNode::write_(void *payload, uint8_t ch, uint8_t len, nodeid_t dest) {
     /* Returns:
     - 0: Normal
     - 1: Send failed, test OK
     - 2: Send failed, address is lost (will block)
     - 3: Invalid send call
     */
-    auto my_id = mesh.getNodeID(mesh.mesh_address);
-    if (my_id < 0 || my_id != nodeID) mesh.renewAddress();
-    if (!mesh.write(payload, ch, len)) {
-      // If a write fails, check connectivity to the mesh network
-      if (!mesh.checkConnection()) {
-        // refresh the network address
-        Serial.println("Renewing Address");
+    if(dest == 0 ){
+        auto my_id = mesh.getNodeID(mesh.mesh_address);
+        if (my_id < 0 || my_id != nodeID) mesh.renewAddress();
+        if (!mesh.write(payload, ch, len)) {
+        // If a write fails, check connectivity to the mesh network
+        if (!mesh.checkConnection()) {
+            // refresh the network address
+            Serial.println("Renewing Address");
+            mesh.renewAddress();
+            return 2;
+        } else return 1;
+        } else return 0;
+    }
+    //dest = 1 for dfu send_packet 
+    else{
         mesh.renewAddress();
-        return 2;
-      } else return 1;
-    } else return 0;
+        if (!mesh.write(payload, ch, len)) {
+        // If a write fails, check connectivity to the mesh network
+        if (!mesh.checkConnection()) {
+            // refresh the network address
+            Serial.println("Renewing Address");
+            mesh.renewAddress();
+            return 2;
+        } else return 1;
+        } else return 0;
+        
+
+    }
 }
