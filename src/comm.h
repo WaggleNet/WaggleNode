@@ -24,9 +24,9 @@ class WaggleNode {
         bool begin();
         bool begin(uint8_t radio_channel);
         void update();
-        uint8_t send_telemetry(void* payload, uint8_t len, uint8_t channel = CH_TELEMETRY);
+        uint8_t send_telemetry(void* payload, uint8_t len, uint8_t channel = CH_TELEMETRY, nodeid_t dest);
         nodeid_t nodeID;
     private:
-        uint8_t write_(void *payload, uint8_t ch, uint8_t len);
+        uint8_t write_(void *payload, uint8_t ch, uint8_t len, nodeid_t dest);
         uint32_t get_sig_byte_();
 };

@@ -1,5 +1,5 @@
 #include "dfu.h"
-
+#include "comm.h"
 
 #define DFU_STATE_MAIN 0
 #define DFU_STATE_SETID 1
@@ -8,8 +8,10 @@
 #define DFU_STATE_HUMAN 200
 #define DFU_STATE_HELP 201
 
+
 uint8_t dfu_state = DFU_STATE_MAIN;
 uint8_t dfu_human_mode = false;
+uint8_t dfu_update_flag = false;
 
 int8_t parse_hex_from_char(char ch) {
     if (ch >= '0' && ch <= '9')
@@ -45,8 +47,21 @@ void dfu_loop() {
         case DFU_STATE_NUKE:
             dfu_nuke();
             break;
+        case DFU_STATE_ACTIVATE:
+            dfu_activate();
+            break;
+        case DFU_STATE_RENEW_ADDRESS:
+            dfu_renew_address();
+            break;
+        case DFU_STATE_SEND_PACKET:
+            dfu_send_packet();
+            break;
     }
 }
+
+
+
+
 
 void dfu_help() {
     Serial.println(F("DFU Mode Instructions:"));
@@ -54,12 +69,17 @@ void dfu_help() {
     Serial.println(F("T=test        Test radio and print result"));
     Serial.println(F("N=nuke        Nuke the DFU for good"));
     Serial.println(F("H=human       Enter / Exit human mode; detailed response"));
+    Serial.println(F("A=activate    Activate the node"));
+    Serial.println(F("R=Renew       Renew node address"));
+    Serial.println(F("P=send        Send packet"));
     dfu_state = DFU_STATE_MAIN;
 }
 
 void dfu_main() {
     Serial.print(F("DFU>"));
-    while(!Serial.available());
+    while(!Serial.available()){
+        dfu_activate();
+    }
     char c = Serial.read();
     // Echo back the char
     Serial.println(c);
@@ -77,6 +97,12 @@ void dfu_main() {
         case 'H': case 'h':
             dfu_state = DFU_STATE_HUMAN;
             break;
+        case 'A': case 'a':
+            dfu_state = DFU_STATE_ACTIVATE;
+        case 'R': case 'r':
+            dfu_state = DFU_STATE_RENEW_ADDRESS;
+        case 'P': case 'p':
+            dfu_state = DFU_STATE_SEND_PACKET; 
         default:
             dfu_state = DFU_STATE_HELP;
             break;
@@ -108,7 +134,7 @@ void dfu_setid() {
     Serial.print(F("?>"));
     // Expect 8 characters
     while (ds_setid_counter < 8) {
-        if (!Serial.available()) continue;
+        if (!Serial.available()) dfu_activate();
         char ch = Serial.read();
         Serial.write(ch);  // Echo back this char
         int8_t data = parse_hex_from_char(ch);
@@ -161,4 +187,24 @@ void dfu_nuke() {
     #endif
     // Perform a hard reset
     asm volatile (" jmp 0");
+}
+
+void dfu_activate() {
+    update();
+    return 0;
+}
+
+void dfu_renew_address(){ 
+    mesh.renewAddress();
+    Serial.println(F("Finish renew address"));
+    return 0;
+}
+
+void dfu_send_packet(){
+    char dest=Serial.read();
+
+    
+    // payload :destination address, length, payload
+    send_telemetry(dest, strlen(dest), CH_TELEMETRY, 1)    
+
 }
