@@ -190,7 +190,10 @@ void dfu_nuke() {
 }
 
 void dfu_activate() {
-    update();
+    node.begin()
+    //set flag
+    dfu_update_flag = true;
+
     return 0;
 }
 
